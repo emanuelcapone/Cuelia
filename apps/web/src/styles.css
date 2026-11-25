@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+:root { color-scheme: light; font-family: system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+:root.dark { color-scheme: dark; background: #0f172a; color: #f8fafc; }
+a { text-decoration: underline; }
+select { border: 1px solid; border-radius: .3rem; padding: .25rem; }

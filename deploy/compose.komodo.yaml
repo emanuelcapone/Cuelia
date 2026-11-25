@@ -1,0 +1,35 @@
+services:
+  app:
+    image: ghcr.io/chiesasiloe/cuelia:${CUELIA_TAG:?Set CUELIA_TAG}
+    pull_policy: always
+    ports:
+      - "127.0.0.1:8005:3000"
+    environment:
+      DATABASE_URL: postgres://cuelia:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db:5432/cuelia
+      LOG_LEVEL: info
+      CUELIA_RELEASE: ${CUELIA_TAG}
+      CUELIA_DEPLOYMENT: ${CUELIA_DEPLOYMENT:-bootstrap}
+    volumes:
+      - media:/app/data/media
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_USER: cuelia
+      POSTGRES_DB: cuelia
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cuelia -d cuelia"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  postgres:
+  media:
+
